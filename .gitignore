@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+# Virtual environment
+.venv/
+
+# Distribution / packaging
+.Python
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+
+# IDEs and other local files
+.vscode/
+.history/
+*.log
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# Data files that might be generated or are too large for Git
+# If your freelance_data.csv becomes very large or is sensitive, you might add it here.
+# For now, we'll include it, as it's small sample data.
+# local_data.csv
