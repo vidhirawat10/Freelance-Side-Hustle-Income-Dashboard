@@ -71,7 +71,6 @@ Gen-Z thrives in remote, independent workspaces. This dashboard is tailored for 
 
 ## 📁 Project Structure<br>
 📦 freelance_income_dashboard/<br>
-├── frontend/ <br>
 ├── backend/<br>
     ├── app/<br>
     │   ├── main.py<br>             
