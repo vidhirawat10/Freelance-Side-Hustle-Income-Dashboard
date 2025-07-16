@@ -71,33 +71,10 @@ Gen-Z thrives in remote, independent workspaces. This dashboard is tailored for 
 
 ## 📁 Project Structure<br>
 📦 freelance_income_dashboard/<br>
-├── backend/<br>
-    ├── app/<br>
-    │   ├── main.py<br>             
-    │   ├── core/<br>               
-    │   │   ├── config.py<br>
-    │   │   └── security.py<br>
-    │   ├── db/<br>                
-    │   │   ├── database.py<br>     
-    │   │   └── models.py<br>       
-    │   ├── schemas/<br>            
-    │   │   ├── user.py<br>
-    │   │   └── project.py<br>
-    │   ├── crud/<br>               
-    │   │   ├── user.py<br>
-    │   │   └── project.py<br>
-    │   ├── api/<br>                
-    │   │   └── v1/<br>
-    │   │       ├── endpoints/<br>
-    │   │       │   ├── users.py<br>
-    │   │       │   └── projects.py<br>
-    │   │       └── __init__.py<br>
-    │   └── services/<br>           
-    │       ├── income_service.py<br> 
-    │       └── __init__.py<br>
-    ├── .env <br>                   
-    ├── requirements.txt <br>       
-    └── README.md<br>
+├── income_data.csv<br>
+├── dashboard.pbix<br>
+├── README.md<br>
+└── screenshots/<br>
 
 
 ---
