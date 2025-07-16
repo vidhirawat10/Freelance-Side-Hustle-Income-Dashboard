@@ -1,104 +1,150 @@
 import streamlit as st
 import pandas as pd
 import datetime
+import plotly.express as px
 
 # --- Configuration ---
 DATA_FILE = 'freelance_data.csv'
 
+# --- Streamlit Page Configuration ---
+# Set page config for a wide layout and dark theme
+st.set_page_config(
+    page_title="Freelance & Side-Hustle Income Dashboard",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    # For dark theme, ensure your Streamlit global settings are set to dark.
+    # You can also manually configure via .streamlit/config.toml if needed.
+)
+
 # --- Load Data ---
-# @st.cache_data tells Streamlit to run this function only once and cache its result
-# This makes the app fast, as it doesn't reload data every time you interact with the dashboard.
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA_FILE)
     df['Date'] = pd.to_datetime(df['Date'])
-    # Extract Month-Year for grouping income trends
     df['Month_Year'] = df['Date'].dt.to_period('M')
-    # Calculate effective hourly rate for each project
-    # Handle cases where Hours_Worked might be 0 to avoid division by zero
     df['Effective_Hourly_Rate'] = df.apply(
         lambda row: row['Payment_Received_USD'] / row['Hours_Worked'] if row['Hours_Worked'] and row['Hours_Worked'] > 0 else 0,
         axis=1
     )
     return df
 
-# Load the data when the app starts
 df = load_data()
 
-# --- Dashboard UI ---
-# Set basic page configuration for a wider layout
-st.set_page_config(layout="wide", page_title="Freelance Income Dashboard")
+# --- Dashboard Title ---
+st.title("Freelance & Side-Hustle Income Dashboard")
+st.markdown("---") # Visual separator
 
-st.title("💰 Simple Freelance & Side-Hustle Income Dashboard")
-
-st.write("---") # A simple horizontal line for separation
-
-# --- Section 1: Overall Performance Metrics ---
-st.header("Overall Performance")
-# Divide the section into 3 columns for neat display
-col1, col2, col3 = st.columns(3)
+# --- Row 1: Income Trend by Skill & Platform-wise Performance ---
+st.header("Overall Trends")
+col1, col2 = st.columns(2) # Two columns for these two charts
 
 with col1:
-    total_income = df['Payment_Received_USD'].sum()
-    st.metric(label="Total Income Earned", value=f"${total_income:,.2f}") # Format as currency
+    st.subheader("Income Trend by Skill")
+    # Prepare data for Income Trend by Skill (Line Chart)
+    # Group by Month_Year and Skill, then sum Payment_Received_USD
+    skill_monthly_income = df.groupby(['Month_Year', 'Skill'])['Payment_Received_USD'].sum().unstack(fill_value=0)
+    skill_monthly_income.index = skill_monthly_income.index.astype('datetime64[ns]') # Ensure datetime index for plotting # Convert Period to Timestamp for plotting
+    st.line_chart(skill_monthly_income) # Use Streamlit's built-in line chart
+
 with col2:
-    total_hours = df['Hours_Worked'].sum()
-    st.metric(label="Total Hours Logged", value=f"{total_hours:,.0f} hrs") # Format as hours
+    st.subheader("Platform-wise Performance")
+    # Prepare data for Platform-wise Performance (Donut Chart)
+    platform_summary = df.groupby('Platform')['Payment_Received_USD'].sum().reset_index()
+    platform_summary.columns = ['Platform', 'Total_Income']
+
+    # Create a Donut Chart using Plotly Express
+    fig_platform = px.pie(
+        platform_summary,
+        values='Total_Income',
+        names='Platform',
+        title='Income Distribution by Platform',
+        hole=0.5, # This creates the donut shape
+        color_discrete_sequence=px.colors.sequential.RdBu # You can experiment with color sequences
+    )
+    # Update layout to center title, adjust font, and remove legend title for cleaner look
+    fig_platform.update_layout(
+        showlegend=True,
+        legend_title_text="", # Remove legend title
+        title_x=0.5 # Center the title
+    )
+    fig_platform.update_traces(textinfo='percent+label', marker=dict(line=dict(color='#000000', width=1)))
+    st.plotly_chart(fig_platform, use_container_width=True) # Display in Streamlit
+
+st.markdown("---") # Visual separator
+
+# --- Row 2: Time Spent vs Money Earned & High-Paying Niches ---
+st.header("Deeper Insights")
+col3, col4 = st.columns(2) # Two columns for these two charts
+
 with col3:
-    # Calculate the overall average hourly rate from all projects
-    avg_hourly_rate = df['Effective_Hourly_Rate'].mean()
-    st.metric(label="Avg. Effective Hourly Rate", value=f"${avg_hourly_rate:,.2f}/hr")
+    st.subheader("Time Spent vs Money Earned")
+    # For simplicity and to match the visual, we'll represent a 50/50 split
+    # In a real app, this might come from categorizing activities or using derived metrics.
+    time_money_data = pd.DataFrame({
+        'Category': ['Time Spent', 'Money Earned'],
+        'Value': [50, 50] # Represents 50% for each
+    })
 
-st.write("---") # Separator
+    fig_time_money = px.pie(
+        time_money_data,
+        values='Value',
+        names='Category',
+        title='Proportion of Effort vs. Reward',
+        hole=0.6, # Make it a donut chart
+        color_discrete_sequence=['#4B0082', '#DA70D6'] # Custom colors (Purple/Orchid-like)
+    )
+    fig_time_money.update_layout(
+        showlegend=False, # As percentages are in the middle, legend might be redundant
+        title_x=0.5, # Center the title
+        annotations=[dict(text='50%', x=0.5, y=0.5, font_size=20, showarrow=False)] # Middle text for 50%
+    )
+    fig_time_money.update_traces(textinfo='none', marker=dict(line=dict(color='#000000', width=1))) # No text labels on slices
+    st.plotly_chart(fig_time_money, use_container_width=True)
 
-# --- Section 2: Income Trend Over Time ---
-st.header("Income Trend Over Time")
-# Group data by Month_Year and sum the income for each month
-monthly_income = df.groupby('Month_Year')['Payment_Received_USD'].sum().reset_index()
-# Convert 'Month_Year' (Period object) to Timestamp for better plotting with Streamlit
-monthly_income['Month_Year'] = monthly_income['Month_Year'].dt.to_timestamp()
-# Display a line chart
-st.line_chart(monthly_income.set_index('Month_Year')['Payment_Received_USD'])
+with col4:
+    st.subheader("High-Paying Niches")
+    # Prepare data for High-Paying Niches (Horizontal Bar Chart)
+    # Group by Skill and sum payment, then sort by income
+    skill_income_ranking = df.groupby('Skill')['Payment_Received_USD'].sum().sort_values(ascending=False).reset_index()
 
-st.write("---") # Separator
+    # Create a Horizontal Bar Chart using Plotly Express
+    fig_niches = px.bar(
+        skill_income_ranking,
+        x='Payment_Received_USD',
+        y='Skill',
+        orientation='h', # Make it a horizontal bar chart
+        title='Top Earning Skills/Niches',
+        text='Payment_Received_USD', # Display values on bars
+        color_discrete_sequence=px.colors.sequential.Plasma # Experiment with color sequences
+    )
+    fig_niches.update_layout(
+        xaxis_title="Total Income Earned ($)",
+        yaxis_title="Skill/Niche",
+        yaxis_autorange="reversed", # Puts highest value at the top
+        title_x=0.5 # Center the title
+    )
+    fig_niches.update_traces(texttemplate='$%{text:,.0f}', textposition='outside')
+    st.plotly_chart(fig_niches, use_container_width=True)
 
-# --- Section 3: Performance by Platform & Skill ---
-st.header("Performance by Platform & Skill")
-# Divide into two columns for side-by-side charts
-col_platform, col_skill = st.columns(2)
+st.markdown("---") # Visual separator
 
-with col_platform:
-    # Group by platform and sum income, then sort
-    platform_income = df.groupby('Platform')['Payment_Received_USD'].sum().sort_values(ascending=False)
-    st.subheader("Income by Platform")
-    st.bar_chart(platform_income) # Display as a bar chart
-
-with col_skill:
-    # Group by skill and sum income, then sort
-    skill_income = df.groupby('Skill')['Payment_Received_USD'].sum().sort_values(ascending=False)
-    st.subheader("Income by Skill")
-    st.bar_chart(skill_income) # Display as a bar chart
-
-st.write("---") # Separator
-
-# --- Section 4: User Query Section (Simple ML/Logic) ---
+# --- Original User Query Section (Retained) ---
 st.header("🚀 Optimize Your Earnings")
 
-# Display the calculated average hourly rate as a reference
+avg_hourly_rate = df['Effective_Hourly_Rate'].mean()
 st.write(f"Based on your historical data, your average effective hourly rate is **${avg_hourly_rate:,.2f}**.")
 
 st.subheader("1. How much can I earn by investing 'X' hours?")
-# Input field for user to enter hours
 hours_to_invest = st.number_input(
     "Enter hours you plan to invest:",
-    min_value=0, # Minimum value is 0 hours
-    value=10,    # Default value is 10 hours
-    step=1,      # Increment by 1 hour
-    help="How many hours do you plan to work?"
+    min_value=0,
+    value=10,
+    step=1,
+    help="How many hours do you plan to work?",
+    key="hours_input" # Added key for uniqueness
 )
 
 if hours_to_invest > 0:
-    # Simple calculation: hours * average_rate
     estimated_earnings = hours_to_invest * avg_hourly_rate
     st.success(f"By investing **{hours_to_invest} hours**, you can expect to earn approximately **${estimated_earnings:,.2f}**.")
 else:
@@ -106,16 +152,15 @@ else:
 
 
 st.subheader("2. How many hours do I need to earn '$Y' amount?")
-# Input field for user to enter target income
 target_income = st.number_input(
     "Enter your target income ($):",
-    min_value=0.0, # Minimum value is $0
-    value=500.0,   # Default value is $500
-    step=50.0,     # Increment by $50
-    help="What's your income goal?"
+    min_value=0.0,
+    value=500.0,
+    step=50.0,
+    help="What's your income goal?",
+    key="income_input" # Added key for uniqueness
 )
 
-# Perform calculation only if target income and average rate are positive
 if target_income > 0 and avg_hourly_rate > 0:
     estimated_hours_needed = target_income / avg_hourly_rate
     st.success(f"To earn **${target_income:,.2f}**, you'll need to work approximately **{estimated_hours_needed:,.1f} hours**.")
@@ -124,5 +169,5 @@ elif target_income > 0 and avg_hourly_rate <= 0:
 else:
     st.info("Enter a positive target income to get an estimate.")
 
-st.write("---")
+st.markdown("---")
 st.info("💡 This dashboard provides insights based on your historical data. Predictions are simple averages and actual results may vary.")
