@@ -75,3 +75,29 @@ Gen-Z thrives in remote, independent workspaces. This dashboard is tailored for 
 ├── dashboard.pbix<br>
 ├── README.md<br>
 └── screenshots/<br>
+
+
+---
+
+## 📌 How to Use
+
+1. Clone the repo  
+2. Open the `.pbix` file in **Power BI Desktop**  
+3. Replace or update the data with your own freelance stats  
+4. Analyze → Optimize → Hustle smarter 💸
+
+---
+
+## 👩‍💻 Author
+
+**Vidhi Rawat**  
+🌟 Data Analyst | Gig Economy Explorer  
+🔗 [LinkedIn](https://linkedin.com/in/vidhirawat10)  
+📫 vidhi.rawat@example.com
+
+---
+
+> 💡 “Turn your side hustle into a main hustle — with data!”
+
+> 📝 Dashboard created with love by **Vidhi Rawat**
+
