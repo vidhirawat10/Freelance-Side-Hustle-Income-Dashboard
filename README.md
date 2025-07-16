@@ -69,5 +69,9 @@ Gen-Z thrives in remote, independent workspaces. This dashboard is tailored for 
 
 ---
 
-## 📁 Project Structure
-
+## 📁 Project Structure<br>
+📦 freelance_income_dashboard/<br>
+├── income_data.csv<br>
+├── dashboard.pbix<br>
+├── README.md<br>
+└── screenshots/<br>
