@@ -12,7 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- Load Data ---
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA_FILE)
