@@ -6,7 +6,6 @@ import plotly.express as px
 
 DATA_FILE = 'freelance_data.csv'
 
-# Set page config for a wide layout and dark theme
 st.set_page_config(
     page_title="Freelance & Side-Hustle Income Dashboard",
     layout="wide",
