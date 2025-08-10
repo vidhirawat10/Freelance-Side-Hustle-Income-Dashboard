@@ -11,7 +11,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
     # For dark theme, ensure your Streamlit global settings are set to dark.
-    # You can also manually configure via .streamlit/config.toml if needed.
 )
 
 # --- Load Data ---
