@@ -153,7 +153,7 @@ target_income = st.number_input(
     value=500.0,
     step=50.0,
     help="What's your income goal?",
-    key="income_input" # Added key for uniqueness
+    key="income_input" 
 )
 
 if target_income > 0 and avg_hourly_rate > 0:
