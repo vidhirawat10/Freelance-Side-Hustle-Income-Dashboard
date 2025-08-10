@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 import plotly.express as px
 
-# --- Configuration ---
+
 DATA_FILE = 'freelance_data.csv'
 
 # --- Streamlit Page Configuration ---
