@@ -10,7 +10,6 @@ st.set_page_config(
     page_title="Freelance & Side-Hustle Income Dashboard",
     layout="wide",
     initial_sidebar_state="expanded",
-    # For dark theme, ensure your Streamlit global settings are set to dark.
 )
 
 # --- Load Data ---
