@@ -26,7 +26,7 @@ def load_data():
 df = load_data()
 
 st.title("Freelance & Side-Hustle Income Dashboard")
-st.markdown("---") # Visual separator
+st.markdown("---") 
 
 # --- Row 1: Income Trend by Skill & Platform-wise Performance ---
 st.header("Overall Trends")
