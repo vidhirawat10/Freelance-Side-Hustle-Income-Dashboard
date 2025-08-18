@@ -29,7 +29,7 @@ st.title("Freelance & Side-Hustle Income Dashboard")
 st.markdown("---") 
 
 st.header("Overall Trends")
-col1, col2 = st.columns(2) # Two columns for these two charts
+col1, col2 = st.columns(2) 
 
 with col1:
     st.subheader("Income Trend by Skill")
