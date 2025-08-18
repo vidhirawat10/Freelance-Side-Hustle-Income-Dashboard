@@ -28,7 +28,6 @@ df = load_data()
 st.title("Freelance & Side-Hustle Income Dashboard")
 st.markdown("---") 
 
-# --- Row 1: Income Trend by Skill & Platform-wise Performance ---
 st.header("Overall Trends")
 col1, col2 = st.columns(2) # Two columns for these two charts
 
