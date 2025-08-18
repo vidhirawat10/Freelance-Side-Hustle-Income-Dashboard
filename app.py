@@ -25,7 +25,6 @@ def load_data():
 
 df = load_data()
 
-# --- Dashboard Title ---
 st.title("Freelance & Side-Hustle Income Dashboard")
 st.markdown("---") # Visual separator
 
